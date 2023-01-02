@@ -5,13 +5,19 @@ services:
 
   db:
     image: surrealdb/surrealdb:latest
-    ports:
-      - 8000:8000
-    restart: always
+    restart: on-failure
+    command:
+      - start
+      - --log=trace
+      - --user=root
+      - --pass=root
     environment:
       POSTGRES_PASSWORD: password
+    ports:
+      - 8000:8000
 
-  backend:
+  api:
+    container_name: api
     build: .
     ports:
       - "8080:8080"

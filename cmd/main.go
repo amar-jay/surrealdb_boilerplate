@@ -10,8 +10,11 @@ import (
 	"github.com/amar-jay/surreal/graph"
 )
 
-const defaultPort = "8080"
 
+var (
+	app = gin.Default()
+	defaultPort = "8080"
+)
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -19,6 +22,10 @@ func main() {
 	}
 
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+
+	app.Get("/api", func(c *gin.Context) {
+		c.String(http.StatusOK, "Hello World")
+	} )
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)

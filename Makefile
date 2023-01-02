@@ -6,4 +6,7 @@ test:
 
 run:
 	go run ./cmd/...
+
+start:
+	./bin/cmd
 .PHONY: build test
