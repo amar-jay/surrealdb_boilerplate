@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
@@ -24,8 +25,9 @@ func main() {
 
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
 
+	dbCtx := context.Background()
 	// database connection
-	db, err := dbConn()
+	db, err := dbConn(&dbCtx)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -33,8 +35,8 @@ func main() {
 	defer db.Close()
 
 	// test database connection
-	db.Info()
-	db.Select("1")
+	db.Info(&dbCtx)
+	db.Select(&dbCtx, "1")
 
 	app.GET("/api", func(c *gin.Context) {
 		c.String(http.StatusOK, "Hello World")

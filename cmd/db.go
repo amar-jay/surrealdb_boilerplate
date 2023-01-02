@@ -1,33 +1,34 @@
 package main
 
 import (
+	"context"
 	"fmt"
 
-	surreal "github.com/surrealdb/surrealdb.go"
+	surreal "github.com/garrison-henkle/surrealdb.go"
 )
 
 const (
-	DB_URL      = "http://localhost:8000/rpc"
+	DB_URL      = "ws://localhost:8000/rpc"
 	DB_USER     = "root"
+	PORT = "8000"
 	DB_PASSWORD = "root"
 )
 
 
 type DB = surreal.DB
 
-func dbConn() (*DB, error) {
+func dbConn(ctx *context.Context) (*DB, error) {
 
-	db, err := surreal.New(DB_URL)
+  db, err := surreal.New(ctx, DB_URL)
 	if err != nil {
-		return nil, fmt.Errorf("Error connecting to database")
+		return nil, err
 	}
 
-	_, err = db.Signin(map[string]interface{}{
-		"user": DB_USER,
-		"pass": DB_PASSWORD,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("Error authenticating to database")
+	if err = db.Signin(ctx, surreal.UserInfo{
+	    User: DB_USER,
+	    Password: DB_PASSWORD,
+	}); err != nil {
+		return nil, fmt.Errorf("error authenticating to database")
 	}
 
 	return db, nil

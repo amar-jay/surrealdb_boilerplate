@@ -4,13 +4,14 @@ go 1.19
 
 require (
 	github.com/99designs/gqlgen v0.17.22
+	github.com/garrison-henkle/surrealdb.go v1.0.9
 	github.com/gin-gonic/gin v1.8.2
-	github.com/surrealdb/surrealdb.go v0.1.1
 	github.com/vektah/gqlparser/v2 v2.5.1
 )
 
 require (
 	github.com/agnivade/levenshtein v1.1.1 // indirect
+	github.com/buger/jsonparser v1.1.1 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
