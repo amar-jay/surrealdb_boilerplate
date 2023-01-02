@@ -1,0 +1,28 @@
+# Use postgres/example user/password credentials
+version: "1.0"
+
+services:
+
+  db:
+    image: surrealdb/surrealdb:latest
+    ports:
+      - 8000:8000
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+
+  backend:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    links:
+      - db
+
+networks:
+  db:
+    driver: bridge
+
+volumes:
+  db:

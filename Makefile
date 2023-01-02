@@ -1,0 +1,9 @@
+build:
+	go build -o bin/ ./cmd/...
+
+test:
+	go test -v ./...
+
+run:
+	go run ./cmd/...
+.PHONY: build test
