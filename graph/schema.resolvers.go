@@ -8,17 +8,43 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/amar-jay/surreal/db"
 	"github.com/amar-jay/surreal/graph/model"
 )
 
 // CreateTodo is the resolver for the createTodo field.
 func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: CreateTodo - createTodo"))
+	d := db.TodoRepo{Db: r.Db, Ctx: ctx}
+	newTodo, err := d.CreateTodo(&input)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return newTodo, nil
+	//newTodo := db.CreateTodo(&input);
+}
+
+// DeleteTodo is the resolver for the deleteTodo field.
+func (r *mutationResolver) DeleteTodo(ctx context.Context, id string) (bool, error) {
+	d := db.TodoRepo{Db: r.Db, Ctx: ctx}
+	deleted, err := d.DeleteTodo(id)
+
+	if err != nil {
+		return false, err
+	}
+	if deleted {
+		return true, nil
+	}
+
+	return false, fmt.Errorf("todo not found")
 }
 
 // Todos is the resolver for the todos field.
 func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: Todos - todos"))
+	d := db.TodoRepo{Db: r.Db, Ctx: ctx}
+
+	return d.GetTodos(), nil
 }
 
 // Mutation returns MutationResolver implementation.

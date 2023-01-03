@@ -6,6 +6,7 @@ require (
 	github.com/99designs/gqlgen v0.17.22
 	github.com/garrison-henkle/surrealdb.go v1.0.9
 	github.com/gin-gonic/gin v1.8.2
+	github.com/satori/uuid v1.2.0
 	github.com/vektah/gqlparser/v2 v2.5.1
 )
 

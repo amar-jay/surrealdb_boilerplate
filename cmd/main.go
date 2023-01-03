@@ -23,28 +23,55 @@ func main() {
 		port = defaultPort
 	}
 
-	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
 
-	dbCtx := context.Background()
 	// database connection
-	db, err := dbConn(&dbCtx)
+	dbCtx := context.Background()
+	Db, err := dbConn(&dbCtx)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	defer db.Close()
-
+	defer Db.Close()
 	// test database connection
-	db.Info(&dbCtx)
-	db.Select(&dbCtx, "1")
+	//Db.Info(&dbCtx)
+	Db.Use(&dbCtx, "test", "test")
+	Db.Select(&dbCtx, "1")
 
+  /*
 	app.GET("/api", func(c *gin.Context) {
 		c.String(http.StatusOK, "Hello World")
-	})
+	})*/
 
-	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	http.Handle("/query", srv)
+  // TODO: fix gin integration with gqlgen
+	//app.GET("/graphql", playgroundHandler())
+	//app.GET("/query", graphqlHandler())
+	http.Handle("/graphql", playground.Handler("GraphQL Playground", "/query"))
+	http.Handle("/query", 
+	  handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{
+		  Resolvers:  &graph.Resolver{Db: Db},
+		  Directives: graph.DirectiveRoot{},
+		  Complexity: graph.ComplexityRoot{},
+	    })))
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
+	//log.Fatal(app.Run(":"+port))
 	log.Fatal(http.ListenAndServe(":"+port, nil))
+}
+
+// Defining the Playground handler
+func playgroundHandler() gin.HandlerFunc {
+	h := playground.Handler("GraphQL", "/query")
+
+	return func(c *gin.Context) {
+		h.ServeHTTP(c.Writer, c.Request)
+	}
+}
+
+// Defining the Graphql handler
+func graphqlHandler() gin.HandlerFunc {
+	h := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+
+	return func(c *gin.Context) {
+		h.ServeHTTP(c.Writer, c.Request)
+	}
 }
